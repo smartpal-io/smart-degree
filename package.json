@@ -19,5 +19,9 @@
   "homepage": "https://gitlab.com/referendum/smart-degree#README",
   "dependencies": {
     "zeppelin-solidity": "1.8.0"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "devDependencies": {}
 }
