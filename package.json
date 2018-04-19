@@ -1,0 +1,23 @@
+{
+  "name": "smart-degree",
+  "version": "1.0.0",
+  "description": "[DECRIPTION]...",
+  "main": "truffle-config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitlab.com/referendum/smart-degree.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://gitlab.com/referendum/smart-degree/issues"
+  },
+  "homepage": "https://gitlab.com/referendum/smart-degree#README",
+  "dependencies": {
+    "zeppelin-solidity": "1.8.0"
+  }
+}
