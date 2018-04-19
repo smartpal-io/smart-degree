@@ -24,6 +24,7 @@ contract SmartDegree is Ownable {
    * @notice Add a new DegreeHash to the contract.
    */
   function addDegreeHash(uint256 id, bytes32 hash) public onlyOwner {
+     require(hashList_[id] == bytes32(0x0));
      hashList_[id]=hash;
      emit DegreeHashAdded(id,hash);
   }
@@ -31,10 +32,10 @@ contract SmartDegree is Ownable {
   /**
    * Use these getter functions to access the degree hash
    * @param id of the degree
-   * @param hash of the degree to verify
+   * @return hash of the degree to verify
    */
-  function verify(uint256 id, bytes32 hash) public view returns(bool) {
-    return hashList_[id]==hash;
+  function getHash(uint256 id) public view returns(bytes32) {
+    return hashList_[id];
   }
 
 }
