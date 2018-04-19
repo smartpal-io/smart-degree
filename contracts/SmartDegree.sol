@@ -24,6 +24,7 @@ contract SmartDegree is Ownable {
    * @notice Add a new DegreeHash to the contract.
    */
   function addDegreeHash(uint256 id, bytes32 hash) public onlyOwner {
+     hashList_[id]=hash;
      emit DegreeHashAdded(id,hash);
   }
 
