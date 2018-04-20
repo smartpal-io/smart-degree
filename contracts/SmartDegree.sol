@@ -11,19 +11,20 @@ contract SmartDegree is Whitelist {
 
   mapping (uint32 => bytes32) private hashList_;
 
-  event DegreeHashAdded(uint256 indexed id, bytes32 indexed hash);
+  event DegreeHashAdded(uint32 indexed id, bytes32 indexed hash);
 
 
   /**
    * @notice Create a new SmartDegree Contract.
    */
   function SmartDegree() public {
+    addAddressToWhitelist(msg.sender);
   }
 
   /**
    * @notice Add a new DegreeHash to the contract.
    */
-  function addDegreeHash(uint32 id, bytes32 hash) public onlyOwner {
+  function addDegreeHash(uint32 id, bytes32 hash) public onlyWhitelisted {
      require(hashList_[id] == bytes32(0x0));
      hashList_[id]=hash;
      emit DegreeHashAdded(id,hash);
@@ -34,7 +35,7 @@ contract SmartDegree is Whitelist {
    * @param id of the degree
    * @return hash of the degree to verify
    */
-  function getHash(uint256 id) public view returns(bytes32) {
+  function getHash(uint32 id) public view returns(bytes32) {
     return hashList_[id];
   }
 
