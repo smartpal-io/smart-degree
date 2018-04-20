@@ -37,5 +37,9 @@ contract SmartDegree is Ownable {
   function getHash(uint256 id) public view returns(bytes32) {
     return hashList_[id];
   }
+  
+  function verify(uint256 id, bytes32 hash) public view returns(bool) {
+    return hashList_[id]==hash;
+  }
 
 }
