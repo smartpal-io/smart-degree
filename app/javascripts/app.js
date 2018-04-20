@@ -25,13 +25,15 @@ var SmartDegree = contract(smart_degree_artifacts);
 
 window.registerDegree = function(student) {
   let studentId = $("#register-student-id").val();
-  console.log("student id : ", studentId);
-  
+  let degreeHash = $("#register-degree-hash").val();
+  console.log("student id : ", degreeHash);
+  console.log("degree hash : ", studentId);
+
   $("#msg").html("Degree has been registered")
   
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash('234564535',"0xe7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c");
+	contractInstance.addDegreeHash(studentId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
 	console.log("addDegreeHash completed")
     /*contractInstance.voteForCandidate(candidateName, voterAddress, signature, {gas: 140000, from: web3.eth.accounts[0]}).then(function() {
       let div_id = candidates[candidateName];
