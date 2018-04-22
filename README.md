@@ -34,6 +34,17 @@ truffle compile
 truffle test
 ```
 
+## Running android test application
+
+This android application call a ethereum smart contract to verify degree's hash 
+
+```
+truffle compile
+truffle deploy
+web3j truffle generate D:/github/smart-degree/build/contracts/SmartDegree.json -o D:/github/smart-degree/app-android/app/src/main/java/ -p com.degree.application.contract
+gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/" -PETH_NETWORK_ID="5776"
+```
+
 ## Authors
 
 ...
