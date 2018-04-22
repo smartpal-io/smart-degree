@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">SmartDegree Application</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_degree_id">Degree id</string>
+    <string name="prompt_hash">Hash</string>
+    <string name="action_sign_in">Verify</string>
+    <string name="action_verify_short">Verify</string>
+    <string name="error_field_required">This field is required</string>
+</resources>
