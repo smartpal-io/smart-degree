@@ -23,27 +23,27 @@ import smart_degree_artifacts from '../../build/contracts/SmartDegree.json'
 var SmartDegree = contract(smart_degree_artifacts);
 
 
-window.registerDegree = function(student) {
-  let studentId = $("#register-student-id").val();
+window.registerDegree = function(degree) {
+  let degreeId = $("#register-degree-id").val();
   let degreeHash = $("#register-degree-hash").val();
-  console.log("student id : ", studentId);
+  console.log("degree id : ", degreeId);
   console.log("degree hash : ", degreeHash);
 
   
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(studentId,toBytes(degreeHash), {gas: 140000, from: web3.eth.accounts[0]});
+	contractInstance.addDegreeHash(degreeId,toBytes(degreeHash), {gas: 140000, from: web3.eth.accounts[0]});
   }).then(function() {
       $("#msg").html("Degree hash added")
   });
 }
 
-window.verifyDegree = function(student) {
-	let studentId = $("#verify-student-id").val();
+window.verifyDegree = function(degree) {
+	let degreeId = $("#verify-degree-id").val();
     let degreeHash = $("#verify-degree-hash").val();
 	
 	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(studentId,toBytes(degreeHash));
+		return contractInstance.verify(degreeId,toBytes(degreeHash));
 	}).then(function(result) {
       $("#msg").html("Verify hash result "+result)
     })
