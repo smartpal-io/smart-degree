@@ -25,33 +25,47 @@ var SmartDegree = contract(smart_degree_artifacts);
 
 window.registerDegree = function(student) {
   let studentId = $("#register-student-id").val();
-  let degreeHash = $("#register-degree-hash").val();
-  console.log("student id : ", studentId);
-  console.log("degree hash : ", degreeHash);
+  let studentName = $("#register-student-name").val();
+  let degreeLabel = $("#register-degree-label").val();
 
+  console.log("student id : ", studentId);
+  console.log("student name : ", studentName);
+  console.log("degree label : ", degreeLabel);
+  
+  let inputHash = studentId.concat(studentName).concat(degreeLabel)
+  
+  console.log("computing keccak256 degree hash with input : ", inputHash);
+  let degreeHash = window.web3.sha3(inputHash);
+  console.log("keccak256 degree hash : ", degreeHash);
   
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(studentId,toBytes(degreeHash), {gas: 140000, from: web3.eth.accounts[0]});
+	contractInstance.addDegreeHash(studentId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
   }).then(function() {
-      $("#msg").html("Degree hash added")
+      $("#msg").html("Degree hash added : ".concat(degreeHash))
+	  document.getElementById("verify-degree-hash").value = degreeHash;
   });
 }
 
 window.verifyDegree = function(student) {
 	let studentId = $("#verify-student-id").val();
-    let degreeHash = $("#verify-degree-hash").val();
-	
+	let studentName = $("#verify-student-name").val();
+	let degreeLabel = $("#verify-degree-label").val();
+	console.log("student id : ", studentId);
+	console.log("student name : ", studentName);
+	console.log("degree label : ", degreeLabel);
+	let inputHash = studentId.concat(studentName).concat(degreeLabel)
+  
+	console.log("computing keccak256 degree hash with input : ", inputHash);
+	let degreeHash = window.web3.sha3(inputHash);
+	console.log("keccak256 degree hash : ", degreeHash);
+  
 	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(studentId,toBytes(degreeHash));
+		return contractInstance.verify(studentId, degreeHash);
 	}).then(function(result) {
       $("#msg").html("Verify hash result "+result)
     })
   
-}
-
-function toBytes(hash){
-	return "0x".concat(hash);
 }
 
 $( document ).ready(function() {
