@@ -31,7 +31,6 @@ dependencies {
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
     implementation 'org.web3j:core:3.3.1-android'
-    implementation 'commons-codec:commons-codec:1.6'
     implementation 'com.android.support:multidex:1.0.3'
-
+    implementation 'com.tarun0.zxing-standalone:zxing-standalone:1.0.0'
 }
