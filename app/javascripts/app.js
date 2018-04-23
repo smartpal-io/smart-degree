@@ -68,6 +68,19 @@ window.verifyDegree = function(student) {
   
 }
 
+window.handleFiles = function(files) {
+	console.log("files : ", files)
+	var reader = new FileReader();
+	reader.onload = function() {
+		
+		console.log("file is " + reader.result);
+	};
+	reader.onerror = function() {
+		console.error("Could not read the file");
+	};
+	reader.readAsBinaryString(files.item(0));
+}
+
 $( document ).ready(function() {
   if (typeof web3 !== 'undefined') {
     console.warn("Using web3 detected from external source like Metamask")
