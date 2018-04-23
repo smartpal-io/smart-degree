@@ -15,3 +15,6 @@ config/development/*.sol.js
 config/test/contracts.json
 build
 dist
+backend/go/src/smart-degree-service/.idea/
+app-android/.idea/
+app-android/.gradle/
