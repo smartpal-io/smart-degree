@@ -24,15 +24,15 @@ var SmartDegree = contract(smart_degree_artifacts);
 
 
 window.registerDegree = function(student) {
-  let studentId = $("#register-student-id").val();
+  let degreeId = $("#register-degree-id").val();
   let studentName = $("#register-student-name").val();
   let degreeLabel = $("#register-degree-label").val();
 
-  console.log("student id : ", studentId);
+  console.log("degree id : ", degreeId);
   console.log("student name : ", studentName);
   console.log("degree label : ", degreeLabel);
   
-  let inputHash = studentId.concat(studentName).concat(degreeLabel)
+  let inputHash = degreeId.concat(studentName).concat(degreeLabel)
   
   console.log("computing keccak256 degree hash with input : ", inputHash);
   let degreeHash = window.web3.sha3(inputHash);
@@ -40,7 +40,7 @@ window.registerDegree = function(student) {
   
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(studentId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
+	contractInstance.addDegreeHash(degreeId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
   }).then(function() {
       $("#msg").html("Degree hash added : ".concat(degreeHash))
 	  document.getElementById("verify-degree-hash").value = degreeHash;
@@ -48,20 +48,20 @@ window.registerDegree = function(student) {
 }
 
 window.verifyDegree = function(student) {
-	let studentId = $("#verify-student-id").val();
+	let degreeId = $("#verify-degree-id").val();
 	let studentName = $("#verify-student-name").val();
 	let degreeLabel = $("#verify-degree-label").val();
-	console.log("student id : ", studentId);
+	console.log("degree id : ", degreeId);
 	console.log("student name : ", studentName);
 	console.log("degree label : ", degreeLabel);
-	let inputHash = studentId.concat(studentName).concat(degreeLabel)
+	let inputHash = degreeId.concat(studentName).concat(degreeLabel)
   
 	console.log("computing keccak256 degree hash with input : ", inputHash);
 	let degreeHash = window.web3.sha3(inputHash);
 	console.log("keccak256 degree hash : ", degreeHash);
   
 	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(studentId, degreeHash);
+		return contractInstance.verify(degreeId, degreeHash);
 	}).then(function(result) {
       $("#msg").html("Verify hash result "+result)
     })
