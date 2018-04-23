@@ -39,7 +39,7 @@
     "web3-provider-engine": "^13.3.3",
     "webpack": "2.7.0",
     "webpack-cli": "^2.0.14",
-    "webpack-dev-server": "2.11.2"
+    "webpack-dev-server": "^2.11.2"
   },
   "main": "test.js",
   "directories": {
