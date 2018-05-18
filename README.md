@@ -55,7 +55,9 @@ gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/" -PETH_NETWORK_ID="5776"
 ## Authors
 
 Adbelhamid Bakhta
+
 Karim Taam
+
 Ludovic Maréchal
 
 See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
