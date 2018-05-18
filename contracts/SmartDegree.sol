@@ -2,7 +2,6 @@ pragma solidity ^0.4.11;
 
 import "../node_modules/zeppelin-solidity/contracts/ownership/Whitelist.sol";
 
-
 /**
  * @title SmartDegree
  * @dev SmartDegree ....
