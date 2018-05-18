@@ -1,0 +1,7 @@
+version: '3.5'
+services:
+
+  rpc:
+    image: trufflesuite/ganache-cli:latest
+    ports:
+      - "8545:8545"
