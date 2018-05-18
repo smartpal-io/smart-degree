@@ -23,16 +23,26 @@ Download dependencies
 npm install
 ```
 
-Compile the smart contracts
+### Compiling the smart contract
 
 ```
 truffle compile
 ```
 
-Deploy the smart contracts
+### Deploying the smart contract
+
+#### Using local RPC
 
 ```
-truffle migrate # --reset optional
+# assuming that a local rpc is running on port 8545
+truffle migrate --network development # --reset optional
+```
+
+#### Using docker
+
+```
+docker-compose up -d
+truffle migrate --network docker --reset
 ```
 
 ## Running the tests
