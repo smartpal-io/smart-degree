@@ -41,6 +41,16 @@ truffle migrate # --reset optional
 truffle test
 ```
 
+## Running the decentralized web application
+
+
+```
+npm run dev
+```
+
+Then visit :  http://localhost:8080/
+
+
 ## Running android test application
 
 This android application call a ethereum smart contract to verify degree's hash 
