@@ -18,3 +18,4 @@ dist
 backend/go/src/smart-degree-service/.idea/
 app-android/.idea/
 app-android/.gradle/
+app/.idea/
