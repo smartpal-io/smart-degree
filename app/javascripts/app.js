@@ -6,8 +6,6 @@ import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract';
 import { default as ethUtil} from 'ethereumjs-util';
 import { default as sigUtil} from 'eth-sig-util';
-
-
 /*
  * When you compile and deploy your Voting contract,
  * truffle stores the abi and deployed address in a json
@@ -18,17 +16,19 @@ import { default as sigUtil} from 'eth-sig-util';
  * https://gist.github.com/maheshmurthy/f6e96d6b3fff4cd4fa7f892de8a1a1b4#file-index-js
  */
 
+var qr = require('qr-image')
+
+
 import smart_degree_artifacts from '../../build/contracts/SmartDegree.json'
 
 var SmartDegree = contract(smart_degree_artifacts);
-
 
 window.registerDegree = function(student) {
   let degreeId = $("#register-degree-id").val();
   let studentName = $("#register-student-name").val();
   let degreeLabel = $("#register-degree-label").val();
 
-  console.log("degree id : ", degreeId);
+  console.log("registration id : ", degreeId);
   console.log("student name : ", studentName);
   console.log("degree label : ", degreeLabel);
   
@@ -36,14 +36,24 @@ window.registerDegree = function(student) {
   
   console.log("computing keccak256 degree hash with input : ", inputHash);
   let degreeHash = window.web3.sha3(inputHash);
+  let degreeIdHash = window.web3.sha3(degreeId);
   console.log("keccak256 degree hash : ", degreeHash);
   
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(degreeId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
+	contractInstance.addDegreeHash(degreeIdHash,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
   }).then(function() {
-      $("#msg").html("Degree hash added : ".concat(degreeHash))
-	  document.getElementById("verify-degree-hash").value = degreeHash;
+      $("#register-result").html("Degree hash added : ".concat(degreeHash));
+
+       var targetUrl = "localhost:8080/verifyEndpoint.html?id="+degreeId+"&name="+studentName+"&label="+degreeLabel
+      console.log("target qrCode : " + targetUrl)
+
+      var code = qr.imageSync(targetUrl, { type: 'png' });
+      var base64Data = btoa(String.fromCharCode.apply(null, code));
+      console.log(base64Data)
+      document.getElementById("verify-qrcode").src = 'data:image/png;base64,'+ base64Data;
+
+	  document.getElementById("degree-hash").innerText = degreeHash;
   });
 }
 
@@ -51,21 +61,28 @@ window.verifyDegree = function(student) {
 	let degreeId = $("#verify-degree-id").val();
 	let studentName = $("#verify-student-name").val();
 	let degreeLabel = $("#verify-degree-label").val();
-	console.log("degree id : ", degreeId);
+	console.log("registration  id : ", degreeId);
 	console.log("student name : ", studentName);
 	console.log("degree label : ", degreeLabel);
 	let inputHash = degreeId.concat(studentName).concat(degreeLabel)
   
 	console.log("computing keccak256 degree hash with input : ", inputHash);
 	let degreeHash = window.web3.sha3(inputHash);
+	let degreeIdHash = window.web3.sha3(degreeId);
 	console.log("keccak256 degree hash : ", degreeHash);
   
 	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(degreeId, degreeHash);
+		return contractInstance.verify(degreeIdHash, degreeHash);
 	}).then(function(result) {
-      $("#msg").html("Verify hash result "+result)
+      $("#verify-result").html("Verify hash result "+result)
+
+      var canvas = document.getElementById('verify-canvas')
+
+       /*QRCode.toCanvas(canvas, 'verifyEndpoint.html?id=a&name=b&label=c', function (error) {
+         if (error) console.error(error)
+         console.log('success!');
+       })*/
     })
-  
 }
 
 window.handleFiles = function(files) {
@@ -93,4 +110,50 @@ $( document ).ready(function() {
   }
 
   SmartDegree.setProvider(web3.currentProvider);
+
+
+   if($("#verify-endpoint").is(':visible')){
+    var params = getSearchParameters();
+
+        console.log("Test")
+
+        var student = {
+            registrationId: params.id,
+            name:params.name,
+            degreeLabel:params.label
+        };
+
+        checkDegree(student)
+   }
 });
+
+
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+function checkDegree(student) {
+    let inputHash = student.registrationId.concat(student.name).concat(student.degreeLabel)
+    console.log("computing keccak256 degree hash with input : ", inputHash);
+
+    let degreeHash = window.web3.sha3(inputHash);
+    let degreeIdHash = window.web3.sha3(student.registrationId);
+    console.log("keccak256 degree hash : ", degreeHash);
+
+    SmartDegree.deployed().then(function(contractInstance) {
+        return contractInstance.verify(degreeIdHash, degreeHash);
+    }).then(function(result) {
+      $("#verify-result").html("Verify hash result "+result)
+    })
+}
