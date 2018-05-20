@@ -55,6 +55,7 @@
   },
   "homepage": "https://github.com/SmartContractCompanion/smart-degree.git",
   "dependencies": {
+    "qr-image": "^3.2.0",
     "zeppelin-solidity": "^1.8.0"
   }
 }
