@@ -3,10 +3,12 @@
 
     <!-- Strings related to login -->
     <string name="prompt_degree_id">Degree id</string>
-    <string name="prompt_student_id">Student id</string>
+    <string name="prompt_student_id">Firstname Lastname</string>
     <string name="prompt_degree_label">Degree label</string>
     <string name="action_sign_in">Verify</string>
     <string name="action_scan">Scan QR Code</string>
     <string name="action_verify_short">Verify</string>
     <string name="error_field_required">This field is required</string>
+    <string name="prompt_graduation_date">Graduation date</string>
+    <string name="prompt_birthday">birthday</string>
 </resources>

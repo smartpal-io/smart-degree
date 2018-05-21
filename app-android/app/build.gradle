@@ -11,7 +11,7 @@ android {
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField "String", "ETH_NETWORK_URL", "$ETH_NETWORK_URL"
-        buildConfigField "String", "ETH_NETWORK_ID", "$ETH_NETWORK_ID"
+        buildConfigField "String", "ETH_NETWORK_ADDR", "$ETH_NETWORK_ADDR"
 
     }
     buildTypes {
