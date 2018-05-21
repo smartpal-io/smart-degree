@@ -52,15 +52,32 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/hash"
+                    android:id="@+id/studentName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_hash"
+                    android:hint="@string/prompt_student_id"
                     android:imeActionId="6"
-                    android:imeActionLabel="@string/action_verify_short"
                     android:imeOptions="actionUnspecified"
                     android:inputType="text"
-                    android:text="961B6DD3EDE3CB8ECBAACBD68DE040CD78EB2ED5889130CCEB4C49268EA4D506"
+                    android:text="Pierre"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/degreeLabel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_degree_label"
+                    android:imeActionId="6"
+                     android:imeOptions="actionUnspecified"
+                    android:inputType="text"
+                    android:text="Bac"
                     android:maxLines="1"
                     android:singleLine="true" />
 
@@ -73,6 +90,15 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/action_sign_in"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/scan"
+                style="?android:textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/action_scan"
                 android:textStyle="bold" />
 
         </LinearLayout>
