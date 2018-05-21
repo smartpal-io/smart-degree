@@ -26,17 +26,19 @@ func RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
 func GetDegreeHashHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	studentId, err := strconv.ParseInt(vars["studentId"], 10, 64)
+	studentId, err := strconv.ParseUint(vars["studentId"], 10, 32)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	degreeHash, err := smartDegreeService.GetDegreeHash(studentId)
+	degreeHash, err := smartDegreeService.GetDegreeHash(uint32(studentId))
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
-	w.Write([]byte(hex.EncodeToString(degreeHash)))
+	h := make([]byte, 32)
+	copy(h, degreeHash[:])
+	w.Write([]byte(hex.EncodeToString(h)))
 	return
 }
 
