@@ -10,7 +10,7 @@ contract TestSmartDegree {
   function testAddDegree() public {
     SmartDegree smartDegree = new SmartDegree();
 
-    uint32 studentId = 1234;
+    bytes32 studentId = 0x000000000000000000000000000000000000000000000000000000000000001;
 	bytes32 degreeHash = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 	bytes32 expected = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 
@@ -22,7 +22,7 @@ contract TestSmartDegree {
   function testGetHashUnknownStudent() public {
     SmartDegree smartDegree = new SmartDegree();
 
-    uint32 studentId = 1234;
+    bytes32 studentId = 0x000000000000000000000000000000000000000000000000000000000000001;
 	bytes32 degreeHash = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 	bytes32 expected = 0x00;
 
@@ -32,7 +32,7 @@ contract TestSmartDegree {
   function testVerifyValidDegree() public {
     SmartDegree smartDegree = new SmartDegree();
 
-    uint32 studentId = 1234;
+    bytes32 studentId = 0x000000000000000000000000000000000000000000000000000000000000001;
 	bytes32 degreeHash = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 	bool expected = true;
 
@@ -44,7 +44,7 @@ contract TestSmartDegree {
   function testVerifyInvalidDegree() public {
     SmartDegree smartDegree = new SmartDegree();
 
-    uint32 studentId = 1234;
+    bytes32 studentId = 0x000000000000000000000000000000000000000000000000000000000000001;
 	bytes32 degreeHash = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 	bytes32 wrongDegreeHash = 0x99834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
 
@@ -60,9 +60,9 @@ contract TestSmartDegree {
   function testVerifyUnknownStudent() public {
     SmartDegree smartDegree = new SmartDegree();
 
-    uint32 studentId = 1234;
+    bytes32 studentId = 0x000000000000000000000000000000000000000000000000000000000000001;
 	bytes32 degreeHash = 0xa7834034bd059ecf00b0661f88f1e7242450bf1951c1e76803e80ce4182e2e9c;
-	uint32 unkownStudentId = 9876;
+	bytes32 unkownStudentId = 0x000000000000000000000000000000000000000000000000000000000000002;
 
 	bool expected = false;
 

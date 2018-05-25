@@ -38,9 +38,12 @@ window.registerDegree = function(student) {
   let degreeHash = window.web3.sha3(inputHash);
   console.log("keccak256 degree hash : ", degreeHash);
   
+  let degreeIdHash = window.web3.sha3(degreeId)
+  console.log("degree id hash : ", degreeIdHash);
+
   SmartDegree.deployed().then(function(contractInstance) {
 	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(degreeId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
+	contractInstance.addDegreeHash(degreeIdHash,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
   }).then(function() {
       $("#msg").html("Degree hash added : ".concat(degreeHash))
 	  document.getElementById("verify-degree-hash").value = degreeHash;
@@ -60,8 +63,11 @@ window.verifyDegree = function(student) {
 	let degreeHash = window.web3.sha3(inputHash);
 	console.log("keccak256 degree hash : ", degreeHash);
   
+	let degreeIdHash = window.web3.sha3(degreeId)
+	console.log("degree id hash : ", degreeIdHash);
+
 	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(degreeId, degreeHash);
+		return contractInstance.verify(degreeIdHash, degreeHash);
 	}).then(function(result) {
       $("#msg").html("Verify hash result "+result)
     })

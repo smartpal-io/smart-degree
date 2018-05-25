@@ -72,6 +72,10 @@ web3j truffle generate D:/github/smart-degree/build/contracts/SmartDegree.json -
 gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/" -PETH_NETWORK_ID="5776"
 ```
 
+You can scan a QR Code like this to fill in the form
+
+![QRCODE](img/qrcode.jpg)
+
 ## Authors
 
 Adbelhamid Bakhta
