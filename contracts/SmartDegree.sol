@@ -21,6 +21,13 @@ contract SmartDegree is Whitelist {
   }
 
   /**
+   * @notice Register a new delegate authorized to add degree
+   */
+  function registerDelegate(address delegate) onlyOwner public returns(bool success) {  
+	return addAddressToWhitelist(delegate);
+  }
+  
+  /**
    * @notice Add a new DegreeHash to the contract.
    */
   function addDegreeHash(uint32 id, bytes32 hash) public onlyWhitelisted {
