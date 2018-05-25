@@ -96,7 +96,7 @@ function registerDegree(data) {
     let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
     console.log("computing keccak256 degree hash with input : ", inputHash);
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = window.web3.sha3(data.registrationNumber);
+    let degreeId = data.registrationNumber;
 
     SmartDegree.deployed().then(function(contractInstance) {
         console.log("wallet used : ", web3.eth.accounts[0])
@@ -121,7 +121,7 @@ function verifyDegree(data) {
 
     let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = window.web3.sha3(data.registrationNumber);
+    let degreeId = data.registrationNumber;
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
@@ -136,7 +136,7 @@ function verifyAndDisplayDegree(data) {
 
     let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = window.web3.sha3(data.registrationNumber);
+    let degreeId = data.registrationNumber;
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
