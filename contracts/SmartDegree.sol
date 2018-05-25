@@ -8,9 +8,9 @@ import "../node_modules/zeppelin-solidity/contracts/ownership/Whitelist.sol";
  */
 contract SmartDegree is Whitelist {
 
-  mapping (uint32 => bytes32) private hashList_;
+  mapping (bytes32 => bytes32) private hashList_;
 
-  event DegreeHashAdded(uint32 indexed id, bytes32 indexed hash);
+  event DegreeHashAdded(bytes32 indexed id, bytes32 indexed hash);
 
 
   /**
@@ -30,7 +30,7 @@ contract SmartDegree is Whitelist {
   /**
    * @notice Add a new DegreeHash to the contract.
    */
-  function addDegreeHash(uint32 id, bytes32 hash) public onlyWhitelisted {
+  function addDegreeHash(bytes32 id, bytes32 hash) public onlyWhitelisted {
      require(hashList_[id] == bytes32(0x0));
      hashList_[id]=hash;
      emit DegreeHashAdded(id,hash);
@@ -41,7 +41,7 @@ contract SmartDegree is Whitelist {
    * @param id of the degree
    * @return hash of the degree to verify
    */
-  function getHash(uint32 id) public view returns(bytes32) {
+  function getHash(bytes32 id) public view returns(bytes32) {
     return hashList_[id];
   }
 
@@ -50,7 +50,7 @@ contract SmartDegree is Whitelist {
    * @param id of the degree
    * @param hash of the degree to verify
    */
-  function verify(uint32 id, bytes32 hash) public view returns(bool) {
+  function verify(bytes32 id, bytes32 hash) public view returns(bool) {
     return hashList_[id]==hash;
   }
 
