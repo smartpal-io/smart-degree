@@ -27,6 +27,7 @@ window.registerDegree = function(student) {
         studentFirstname: $("#studentFirstname").val(),
         studentSurname: $("#studentSurname").val(),
         studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
         degreeLabel: $("#degreeLabel").val(),
     };
     registerDegree(data)
@@ -38,6 +39,7 @@ window.verifyDegree = function(student) {
         studentFirstname: $("#studentFirstname").val(),
         studentSurname: $("#studentSurname").val(),
         studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
         degreeLabel: $("#degreeLabel").val(),
     };
     verifyDegree(data)
@@ -67,6 +69,7 @@ $( document ).ready(function() {
             studentFirstname: params.studentFirstname,
             studentSurname: params.studentSurname,
             studentBirthDate: params.studentBirthDate,
+            graduationDate: params.graduationDate,
             degreeLabel: params.degreeLabel,
         };
         verifyAndDisplayDegree(data)
@@ -96,7 +99,7 @@ function registerDegree(data) {
     let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
     console.log("computing keccak256 degree hash with input : ", inputHash);
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
 
     SmartDegree.deployed().then(function(contractInstance) {
         console.log("wallet used : ", web3.eth.accounts[0])
@@ -105,7 +108,7 @@ function registerDegree(data) {
         $("#register-result").html("Degree hash added : ".concat(degreeHash));
 
         var targetUrl = "http://192.168.1.12:8080/verifyEndpoint.html?registrationNumber="+data.registrationNumber+"&studentFirstname="+data.studentFirstname+
-        "&studentSurname="+data.studentSurname+"&studentBirthDate="+data.studentBirthDate+"&degreeLabel="+data.degreeLabel
+        "&studentSurname="+data.studentSurname+"&studentBirthDate="+data.studentBirthDate+"&degreeLabel="+data.degreeLabel+"&graduationDate="+data.graduationDate
 
         console.log("target qrCode : " + targetUrl)
 
@@ -119,9 +122,9 @@ function verifyDegree(data) {
     console.log("verifyDegree")
     console.log(data)
 
-    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(graduationDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
@@ -134,16 +137,14 @@ function verifyAndDisplayDegree(data) {
     console.log("verifyDegree")
     console.log(data)
 
-    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(graduationDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
     }).then(function(result) {
-
-        console.log(result)
-
+		
         if(result === true){
             result = "EXISTS"
         }else{
@@ -156,6 +157,7 @@ function verifyAndDisplayDegree(data) {
         $("#studentFirstname").text(data.studentFirstname)
         $("#studentSurname").text(data.studentSurname)
         $("#studentBirthDate").text(data.studentBirthDate)
+        $("#graduationDate").text(data.graduationDate)
         $("#degreeLabel").text(data.degreeLabel)
     })
 }
