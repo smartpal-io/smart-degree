@@ -65,16 +65,16 @@ Then visit :  http://localhost:8080/
 
 This android application call a ethereum smart contract to verify degree's hash 
 
+![ANDROID_APP](img/Screenshot_android_app_1.png) ![ANDROID_APP_2](img/Screenshot_android_app_2.png)
+
 ```
-truffle compile
-truffle deploy
-web3j truffle generate D:/github/smart-degree/build/contracts/SmartDegree.json -o D:/github/smart-degree/app-android/app/src/main/java/ -p com.degree.application.contract
-gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/" -PETH_NETWORK_ID="5776"
+web3j truffle generate [LOCATION]/smart-degree/build/contracts/SmartDegree.json -o [LOCATION]/smart-degree/app-android/app/src/main/java/ -p com.degree.application.contract
+gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/"
 ```
 
 You can scan a QR Code like this to fill in the form
 
-![QRCODE](img/qrcode.jpg)
+![QRCODE](img/qr_code.jpg)
 
 ## Authors
 
