@@ -15,11 +15,13 @@ import { default as sigUtil} from 'eth-sig-util';
  * Compare this against the index.js from our previous tutorial to see the difference
  * https://gist.github.com/maheshmurthy/f6e96d6b3fff4cd4fa7f892de8a1a1b4#file-index-js
  */
+ 
 
 var qr = require('qr-image')
 import smart_degree_artifacts from '../../build/contracts/SmartDegree.json'
-
 var SmartDegree = contract(smart_degree_artifacts);
+var ipAddress = "http://192.168.1.12"
+var contractAddress
 
 window.registerDegree = function(student) {
     var data = {
@@ -27,6 +29,7 @@ window.registerDegree = function(student) {
         studentFirstname: $("#studentFirstname").val(),
         studentSurname: $("#studentSurname").val(),
         studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
         degreeLabel: $("#degreeLabel").val(),
     };
     registerDegree(data)
@@ -38,6 +41,7 @@ window.verifyDegree = function(student) {
         studentFirstname: $("#studentFirstname").val(),
         studentSurname: $("#studentSurname").val(),
         studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
         degreeLabel: $("#degreeLabel").val(),
     };
     verifyDegree(data)
@@ -51,13 +55,18 @@ $( document ).ready(function() {
     window.web3 = new Web3(web3.currentProvider);
 
   } else {
-    console.warn("No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
+    console.warn("No web3 detected. Falling back to "+ipAddress+". You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
     //$("#verify-result").html("No web3 detected.")
     // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://192.168.1.12:8545"));
+    window.web3 = new Web3(new Web3.providers.HttpProvider(ipAddress+":8545"));
   }
-
   SmartDegree.setProvider(web3.currentProvider);
+
+    SmartDegree.deployed().then(function(contractInstance) {
+      contractAddress = contractInstance.address
+    });
+
+
    if($("#verify-endpoint").is(':visible')){
     var params = getSearchParameters();
         console.log("verify-endpoint")
@@ -67,6 +76,7 @@ $( document ).ready(function() {
             studentFirstname: params.studentFirstname,
             studentSurname: params.studentSurname,
             studentBirthDate: params.studentBirthDate,
+            graduationDate: params.graduationDate,
             degreeLabel: params.degreeLabel,
         };
         verifyAndDisplayDegree(data)
@@ -90,22 +100,24 @@ function transformToAssocArray( prmstr ) {
 }
 
 function registerDegree(data) {
-    console.log("registerDegree")
-    console.log(data)
+	$("#result").html("")
+	document.getElementById("resultImg").src = ""
 
-    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
-    console.log("computing keccak256 degree hash with input : ", inputHash);
+    console.log("registerDegree")
+
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
+    console.log("hash input : ", inputHash);
+    console.log("registrationNumber input : ", data.registrationNumber);
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
 
     SmartDegree.deployed().then(function(contractInstance) {
         console.log("wallet used : ", web3.eth.accounts[0])
         contractInstance.addDegreeHash(degreeId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
-    }).then(function() {
-        $("#register-result").html("Degree hash added : ".concat(degreeHash));
-
-        var targetUrl = "http://192.168.1.12:8080/verifyEndpoint.html?registrationNumber="+data.registrationNumber+"&studentFirstname="+data.studentFirstname+
-        "&studentSurname="+data.studentSurname+"&studentBirthDate="+data.studentBirthDate+"&degreeLabel="+data.degreeLabel
+    }).then(function(status) {
+        $("#result").html("Degree hash added succesfully");
+         var targetUrl = ipAddress+":8080/verifyEndpoint.html?registrationNumber="+data.registrationNumber+"&studentFirstname="+data.studentFirstname+
+        "&studentSurname="+data.studentSurname+"&studentBirthDate="+data.studentBirthDate+"&degreeLabel="+data.degreeLabel+"&graduationDate="+data.graduationDate+"&address="+contractAddress
 
         console.log("target qrCode : " + targetUrl)
 
@@ -119,14 +131,30 @@ function verifyDegree(data) {
     console.log("verifyDegree")
     console.log(data)
 
-    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
+
+    console.log(inputHash)
+    console.log(degreeHash)
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
     }).then(function(result) {
-      $("#verify-result").html("Verify hash result "+result)
+     
+		var resultText = "This Degree "
+		var resultImg
+		
+		if(result === true){
+            resultText += "EXISTS"
+			resultImg = "valid.png"
+        }else{
+            resultText += "DOESN'T EXIST"
+			resultImg = "invalid.png"
+        }
+
+        $("#result").html(resultText)
+		document.getElementById("resultImg").src = resultImg
     })
 }
 
@@ -134,28 +162,38 @@ function verifyAndDisplayDegree(data) {
     console.log("verifyDegree")
     console.log(data)
 
-    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.degreeLabel)
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
     let degreeHash = window.web3.sha3(inputHash);
-    let degreeId = data.registrationNumber;
+    let degreeId = window.web3.sha3(data.registrationNumber);
+
+    console.log(inputHash)
+    console.log(degreeHash)
 
     SmartDegree.deployed().then(function(contractInstance) {
         return contractInstance.verify(degreeId, degreeHash);
     }).then(function(result) {
-
-        console.log(result)
-
+		
+		var resultText = "This Degree "
+		var resultImg
+		
+		console.log(result)
+		
         if(result === true){
-            result = "EXISTS"
+            resultText += "EXISTS"
+			resultImg = "valid.png"
         }else{
-            result = "DOESN'T EXIST"
+            resultText += "DOESN'T EXIST"
+			resultImg = "invalid.png"
         }
 
-        $("#verify-result").html(result)
+        $("#result").html(resultText)
+        document.getElementById("resultImg").src = resultImg
 
         $("#registrationNumber").text(data.registrationNumber)
         $("#studentFirstname").text(data.studentFirstname)
         $("#studentSurname").text(data.studentSurname)
         $("#studentBirthDate").text(data.studentBirthDate)
+        $("#graduationDate").text(data.graduationDate)
         $("#degreeLabel").text(data.degreeLabel)
     })
 }
