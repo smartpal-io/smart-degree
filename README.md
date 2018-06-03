@@ -7,7 +7,6 @@ Smart degree aims to provide a decentralized solution to manage degree. The main
 Smart Degree repository contains :
 
 * truffle project for ethereum smart contract management
-* android application to interact with the smart contract
 * decentralized web application to interact with the smart contract
 * a backend written in Golang to interact with the smart contract
 
@@ -63,18 +62,8 @@ Then visit :  http://localhost:8080/
 
 ## Running android test application
 
-This android application call a ethereum smart contract to verify degree's hash 
-
-![ANDROID_APP](img/Screenshot_android_app_1.png) ![ANDROID_APP_2](img/Screenshot_android_app_2.png)
-
-```
-web3j truffle generate [LOCATION]/smart-degree/build/contracts/SmartDegree.json -o [LOCATION]/smart-degree/app-android/app/src/main/java/ -p com.degree.application.contract
-gradle assemble -PETH_NETWORK_URL="http://[IP]:[PORT]/"
-```
-
-You can scan a QR Code like this to fill in the form
-
-![QRCODE](img/qr_code.jpg)
+The android application call a ethereum smart contract to verify degree's hash 
+see this repository : https://github.com/SmartContractCompanion/smart-degree-dapp-android
 
 ## Authors
 
