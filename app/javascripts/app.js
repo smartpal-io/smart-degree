@@ -6,8 +6,6 @@ import { default as Web3} from 'web3';
 import { default as contract } from 'truffle-contract';
 import { default as ethUtil} from 'ethereumjs-util';
 import { default as sigUtil} from 'eth-sig-util';
-
-
 /*
  * When you compile and deploy your Voting contract,
  * truffle stores the abi and deployed address in a json
@@ -17,86 +15,185 @@ import { default as sigUtil} from 'eth-sig-util';
  * Compare this against the index.js from our previous tutorial to see the difference
  * https://gist.github.com/maheshmurthy/f6e96d6b3fff4cd4fa7f892de8a1a1b4#file-index-js
  */
+ 
 
+var qr = require('qr-image')
 import smart_degree_artifacts from '../../build/contracts/SmartDegree.json'
-
 var SmartDegree = contract(smart_degree_artifacts);
-
+var ipAddress = "http://192.168.1.12"
+var contractAddress
 
 window.registerDegree = function(student) {
-  let degreeId = $("#register-degree-id").val();
-  let studentName = $("#register-student-name").val();
-  let degreeLabel = $("#register-degree-label").val();
-
-  console.log("degree id : ", degreeId);
-  console.log("student name : ", studentName);
-  console.log("degree label : ", degreeLabel);
-  
-  let inputHash = degreeId.concat(studentName).concat(degreeLabel)
-  
-  console.log("computing keccak256 degree hash with input : ", inputHash);
-  let degreeHash = window.web3.sha3(inputHash);
-  console.log("keccak256 degree hash : ", degreeHash);
-  
-  let degreeIdHash = window.web3.sha3(degreeId)
-  console.log("degree id hash : ", degreeIdHash);
-
-  SmartDegree.deployed().then(function(contractInstance) {
-	console.log("wallet used : ", web3.eth.accounts[0])
-	contractInstance.addDegreeHash(degreeIdHash,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
-  }).then(function() {
-      $("#msg").html("Degree hash added : ".concat(degreeHash))
-	  document.getElementById("verify-degree-hash").value = degreeHash;
-  });
+    var data = {
+        registrationNumber: $("#registrationNumber").val(),
+        studentFirstname: $("#studentFirstname").val(),
+        studentSurname: $("#studentSurname").val(),
+        studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
+        degreeLabel: $("#degreeLabel").val(),
+    };
+    registerDegree(data)
 }
 
 window.verifyDegree = function(student) {
-	let degreeId = $("#verify-degree-id").val();
-	let studentName = $("#verify-student-name").val();
-	let degreeLabel = $("#verify-degree-label").val();
-	console.log("degree id : ", degreeId);
-	console.log("student name : ", studentName);
-	console.log("degree label : ", degreeLabel);
-	let inputHash = degreeId.concat(studentName).concat(degreeLabel)
-  
-	console.log("computing keccak256 degree hash with input : ", inputHash);
-	let degreeHash = window.web3.sha3(inputHash);
-	console.log("keccak256 degree hash : ", degreeHash);
-  
-	let degreeIdHash = window.web3.sha3(degreeId)
-	console.log("degree id hash : ", degreeIdHash);
-
-	SmartDegree.deployed().then(function(contractInstance) {
-		return contractInstance.verify(degreeIdHash, degreeHash);
-	}).then(function(result) {
-      $("#msg").html("Verify hash result "+result)
-    })
-  
-}
-
-window.handleFiles = function(files) {
-	console.log("files : ", files)
-	var reader = new FileReader();
-	reader.onload = function() {
-		
-		console.log("file is " + reader.result);
-	};
-	reader.onerror = function() {
-		console.error("Could not read the file");
-	};
-	reader.readAsBinaryString(files.item(0));
+    var data = {
+        registrationNumber: $("#registrationNumber").val(),
+        studentFirstname: $("#studentFirstname").val(),
+        studentSurname: $("#studentSurname").val(),
+        studentBirthDate: $("#studentBirthDate").val(),
+        graduationDate: $("#graduationDate").val(),
+        degreeLabel: $("#degreeLabel").val(),
+    };
+    verifyDegree(data)
 }
 
 $( document ).ready(function() {
   if (typeof web3 !== 'undefined') {
     console.warn("Using web3 detected from external source like Metamask")
+    //$("#verify-result").html("Using web3 detected from external source like Metamask")
     // Use Mist/MetaMask's provider
     window.web3 = new Web3(web3.currentProvider);
-  } else {
-    console.warn("No web3 detected. Falling back to http://localhost:8545. You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
-    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
-    window.web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-  }
 
+  } else {
+    console.warn("No web3 detected. Falling back to "+ipAddress+". You should remove this fallback when you deploy live, as it's inherently insecure. Consider switching to Metamask for development. More info here: http://truffleframework.com/tutorials/truffle-and-metamask");
+    //$("#verify-result").html("No web3 detected.")
+    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+    window.web3 = new Web3(new Web3.providers.HttpProvider(ipAddress+":8545"));
+  }
   SmartDegree.setProvider(web3.currentProvider);
+
+    SmartDegree.deployed().then(function(contractInstance) {
+      contractAddress = contractInstance.address
+    });
+
+
+   if($("#verify-endpoint").is(':visible')){
+    var params = getSearchParameters();
+        console.log("verify-endpoint")
+
+        var data = {
+            registrationNumber: params.registrationNumber,
+            studentFirstname: params.studentFirstname,
+            studentSurname: params.studentSurname,
+            studentBirthDate: params.studentBirthDate,
+            graduationDate: params.graduationDate,
+            degreeLabel: params.degreeLabel,
+        };
+        verifyAndDisplayDegree(data)
+   }
 });
+
+
+function getSearchParameters() {
+      var prmstr = window.location.search.substr(1);
+      return prmstr != null && prmstr != "" ? transformToAssocArray(prmstr) : {};
+}
+
+function transformToAssocArray( prmstr ) {
+    var params = {};
+    var prmarr = prmstr.split("&");
+    for ( var i = 0; i < prmarr.length; i++) {
+        var tmparr = prmarr[i].split("=");
+        params[tmparr[0]] = tmparr[1];
+    }
+    return params;
+}
+
+function registerDegree(data) {
+	$("#result").html("")
+	document.getElementById("resultImg").src = ""
+
+    console.log("registerDegree")
+
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
+    console.log("hash input : ", inputHash);
+    console.log("registrationNumber input : ", data.registrationNumber);
+    let degreeHash = window.web3.sha3(inputHash);
+    let degreeId = window.web3.sha3(data.registrationNumber);
+
+    SmartDegree.deployed().then(function(contractInstance) {
+        console.log("wallet used : ", web3.eth.accounts[0])
+        contractInstance.addDegreeHash(degreeId,degreeHash, {gas: 140000, from: web3.eth.accounts[0]});
+    }).then(function(status) {
+        $("#result").html("Degree hash added succesfully");
+         var targetUrl = ipAddress+":8080/verifyEndpoint.html?registrationNumber="+data.registrationNumber+"&studentFirstname="+data.studentFirstname+
+        "&studentSurname="+data.studentSurname+"&studentBirthDate="+data.studentBirthDate+"&degreeLabel="+data.degreeLabel+"&graduationDate="+data.graduationDate+"&address="+contractAddress
+
+        console.log("target qrCode : " + targetUrl)
+
+        var code = qr.imageSync(targetUrl, { type: 'png' });
+        var base64Data = btoa(String.fromCharCode.apply(null, code));
+        document.getElementById("verify-qrcode").src = 'data:image/png;base64,'+ base64Data;
+    });
+}
+
+function verifyDegree(data) {
+    console.log("verifyDegree")
+    console.log(data)
+
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
+    let degreeHash = window.web3.sha3(inputHash);
+    let degreeId = window.web3.sha3(data.registrationNumber);
+
+    console.log(inputHash)
+    console.log(degreeHash)
+
+    SmartDegree.deployed().then(function(contractInstance) {
+        return contractInstance.verify(degreeId, degreeHash);
+    }).then(function(result) {
+     
+		var resultText = "This Degree "
+		var resultImg
+		
+		if(result === true){
+            resultText += "EXISTS"
+			resultImg = "valid.png"
+        }else{
+            resultText += "DOESN'T EXIST"
+			resultImg = "invalid.png"
+        }
+
+        $("#result").html(resultText)
+		document.getElementById("resultImg").src = resultImg
+    })
+}
+
+function verifyAndDisplayDegree(data) {
+    console.log("verifyDegree")
+    console.log(data)
+
+    let inputHash = data.registrationNumber.concat(data.studentFirstname).concat(data.studentSurname).concat(data.studentBirthDate).concat(data.graduationDate).concat(data.degreeLabel)
+    let degreeHash = window.web3.sha3(inputHash);
+    let degreeId = window.web3.sha3(data.registrationNumber);
+
+    console.log(inputHash)
+    console.log(degreeHash)
+
+    SmartDegree.deployed().then(function(contractInstance) {
+        return contractInstance.verify(degreeId, degreeHash);
+    }).then(function(result) {
+		
+		var resultText = "This Degree "
+		var resultImg
+		
+		console.log(result)
+		
+        if(result === true){
+            resultText += "EXISTS"
+			resultImg = "valid.png"
+        }else{
+            resultText += "DOESN'T EXIST"
+			resultImg = "invalid.png"
+        }
+
+        $("#result").html(resultText)
+        document.getElementById("resultImg").src = resultImg
+
+        $("#registrationNumber").text(data.registrationNumber)
+        $("#studentFirstname").text(data.studentFirstname)
+        $("#studentSurname").text(data.studentSurname)
+        $("#studentBirthDate").text(data.studentBirthDate)
+        $("#graduationDate").text(data.graduationDate)
+        $("#degreeLabel").text(data.degreeLabel)
+    })
+}
