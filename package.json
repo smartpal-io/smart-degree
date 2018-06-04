@@ -40,7 +40,7 @@
     "webpack": "2.7.0",
     "webpack-cli": "^2.0.14",
     "webpack-dev-server": "^2.11.2",
-    "open-smartkit": "0.0.1"
+    "open-smartkit": "0.0.2"
   },
   "main": "test.js",
   "directories": {
