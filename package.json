@@ -1,5 +1,5 @@
 {
-  "name": "truffle-init-webpack",
+  "name": "smart-degree",
   "version": "0.0.2",
   "description": "Frontend example using truffle v3",
   "scripts": {
@@ -39,7 +39,8 @@
     "web3-provider-engine": "^13.3.3",
     "webpack": "2.7.0",
     "webpack-cli": "^2.0.14",
-    "webpack-dev-server": "^2.11.2"
+    "webpack-dev-server": "^2.11.2",
+    "open-smartkit": "0.0.1"
   },
   "main": "test.js",
   "directories": {
@@ -55,6 +56,6 @@
   },
   "homepage": "https://github.com/SmartContractCompanion/smart-degree.git",
   "dependencies": {
-    "zeppelin-solidity": "^1.8.0"
+    "openzeppelin-solidity": "1.9.0"
   }
 }
