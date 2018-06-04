@@ -1,17 +1,15 @@
 pragma solidity ^0.4.24;
 
-import "../node_modules/zeppelin-solidity/contracts/ownership/Whitelist.sol";
+import "../node_modules/open-smartkit/contracts/integrity/Sealable.sol";
 
 /**
  * @title SmartDegree
  * @dev SmartDegree ....
  */
-contract SmartDegree is Whitelist {
-
-  mapping (bytes32 => bytes32) private hashList_;
+contract SmartDegree is Sealable {
 
   event LogDegreeHashAdded(bytes32 indexed id, bytes32 indexed hash);
-
+  event LogAuthorityGranted(address grantee);
 
   /**
    * @notice Create a new SmartDegree Contract.
@@ -23,35 +21,37 @@ contract SmartDegree is Whitelist {
   /**
    * @notice Register a new delegate authorized to add degree
    */
-  function registerDelegate(address delegate) onlyOwner public returns(bool success) {  
-	return addAddressToWhitelist(delegate);
+  function grantAuthority(address grantee) onlyOwner public returns(bool success) {  
+	success = super.registerDelegate(grantee);
+	emit LogAuthorityGranted(grantee);
+	return success;
+  }
+  
+   /**
+   * Use this getter function to access the degree hash value
+   * @param id of the seal
+   * @return the seal
+   */
+  function getDegreeHash(bytes32 id) public view returns(bytes32) {
+    return super.getSeal(id);
   }
   
   /**
    * @notice Add a new DegreeHash to the contract.
    */
-  function addDegreeHash(bytes32 id, bytes32 hash) public onlyWhitelisted {
-     require(hashList_[id] == bytes32(0x0));
-     hashList_[id]=hash;
-     emit LogDegreeHashAdded(id,hash);
+  function deliverDegree(bytes32 id, bytes32 degreeHash) public onlyWhitelisted {
+	 super.recordSeal(id, degreeHash);
+     emit LogDegreeHashAdded(id,degreeHash);
   }
 
-  /**
-   * Use these getter functions to access the degree hash
-   * @param id of the degree
-   * @return hash of the degree to verify
-   */
-  function getHash(bytes32 id) public view returns(bytes32) {
-    return hashList_[id];
-  }
 
   /**
    * Use these method functions to verify a degree hash
    * @param id of the degree
-   * @param hash of the degree to verify
+   * @param degreeHash of the degree to verify
    */
-  function verify(bytes32 id, bytes32 hash) public view returns(bool) {
-    return hashList_[id]==hash;
+  function isValid(bytes32 id, bytes32 degreeHash) public view returns(bool) {
+    return super.verifySeal(id, degreeHash);
   }
 
 }
