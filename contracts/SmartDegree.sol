@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.24;
 
 import "../node_modules/zeppelin-solidity/contracts/ownership/Whitelist.sol";
 
@@ -10,13 +10,13 @@ contract SmartDegree is Whitelist {
 
   mapping (bytes32 => bytes32) private hashList_;
 
-  event DegreeHashAdded(bytes32 indexed id, bytes32 indexed hash);
+  event LogDegreeHashAdded(bytes32 indexed id, bytes32 indexed hash);
 
 
   /**
    * @notice Create a new SmartDegree Contract.
    */
-  function SmartDegree() public {
+  constructor() public {
     addAddressToWhitelist(msg.sender);
   }
 
@@ -33,7 +33,7 @@ contract SmartDegree is Whitelist {
   function addDegreeHash(bytes32 id, bytes32 hash) public onlyWhitelisted {
      require(hashList_[id] == bytes32(0x0));
      hashList_[id]=hash;
-     emit DegreeHashAdded(id,hash);
+     emit LogDegreeHashAdded(id,hash);
   }
 
   /**
