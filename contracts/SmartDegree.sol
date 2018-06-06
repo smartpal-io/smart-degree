@@ -8,7 +8,7 @@ import "../node_modules/open-smartkit/contracts/integrity/Sealable.sol";
  */
 contract SmartDegree is Sealable {
 
-  event LogDegreeHashAdded(bytes32 indexed id, bytes32 indexed hash);
+  event LogDegreeDelivered(bytes32 indexed id, bytes32 indexed hash);
   event LogAuthorityGranted(address grantee);
 
   /**
@@ -37,11 +37,11 @@ contract SmartDegree is Sealable {
   }
   
   /**
-   * @notice Add a new DegreeHash to the contract.
+   * @notice Deliver a degree
    */
   function deliverDegree(bytes32 id, bytes32 degreeHash) public onlyWhitelisted {
 	 super.recordSeal(id, degreeHash);
-     emit LogDegreeHashAdded(id,degreeHash);
+     emit LogDegreeDelivered(id,degreeHash);
   }
 
 
