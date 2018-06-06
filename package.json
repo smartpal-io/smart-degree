@@ -7,6 +7,7 @@
   "devDependencies": {
     "truffle": "^4.1.11",
     "truffle-contract": "3.0.5",
+    "truffle-artifactor": "3.0.5",
     "web3": "1.0.0-beta.34",
     "web3-provider-engine": "^14.0.5",
     "babel-preset-es2015": "^6.18.0",
