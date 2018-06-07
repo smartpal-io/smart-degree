@@ -3,6 +3,9 @@
   "version": "0.0.2",
   "description": "Decentralized diploma management system",
   "author": "SmartContractCompanion",
+  "files": [
+    "build/"
+  ],
   "license": "MIT",
   "devDependencies": {
     "truffle": "^4.1.11",
